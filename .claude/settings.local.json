@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:mansours7016-coder.github.io)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where python:*)",
+      "Bash(where python3:*)",
+      "Bash(where node:*)",
+      "Bash(where npx:*)",
+      "Bash(where python3.exe)",
+      "Bash(where py.exe)",
+      "Read(//c/Users/medha/AppData/Local/Programs/**)",
+      "Read(//c//**)",
+      "Bash(cmd //c \"python --version\")",
+      "Bash(cmd //c \"py --version\")",
+      "Bash(cmd //c \"node --version\")",
+      "Bash(cmd //c \"py -3 --version\")",
+      "Bash(cmd //c \"where node\")",
+      "Bash(cmd //c \"where py\")"
+    ]
+  }
+}
