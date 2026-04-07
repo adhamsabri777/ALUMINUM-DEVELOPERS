@@ -17,7 +17,13 @@
       "Bash(cmd //c \"node --version\")",
       "Bash(cmd //c \"py -3 --version\")",
       "Bash(cmd //c \"where node\")",
-      "Bash(cmd //c \"where py\")"
+      "Bash(cmd //c \"where py\")",
+      "Bash(gh auth:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -Command \"Write-Host ''powershell works''\")",
+      "Bash(kill %1)",
+      "Bash(powershell.exe -Command \"Get-Process -Id \\(Get-NetTCPConnection -LocalPort 8080 -ErrorAction SilentlyContinue\\).OwningProcess -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "Bash(powershell.exe -Command \"\\(Get-NetTCPConnection -LocalPort 8080 -ErrorAction SilentlyContinue\\) | Select-Object OwningProcess,State\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:57205/)"
     ]
   }
 }
