@@ -42,12 +42,21 @@
         .pipeline-step::after { content:''; position:absolute; right:-18px; top:50%; transform:translateY(-50%); border:8px solid transparent; border-left-color:#cbd5e1; }
         html[dir="rtl"] .pipeline-step::after { right:auto; left:-18px; border-left-color:transparent; border-right-color:#cbd5e1; }
         .pipeline-step:last-child::after { display:none; }
+        @media (max-width: 767px) {
+            #sidebar { transform: translateX(-100%); transition: transform .3s ease; }
+            #sidebar.open { transform: translateX(0); }
+            html[dir="rtl"] #sidebar { transform: translateX(100%); }
+            html[dir="rtl"] #sidebar.open { transform: translateX(0); }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
 <!-- SIDEBAR -->
+<div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden" onclick="toggleSidebar()"></div>
 <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-steel text-white z-50 overflow-y-auto flex flex-col">
+    <!-- Close button for mobile -->
+    <button onclick="toggleSidebar()" class="md:hidden absolute top-4 right-4 text-white text-xl">&times;</button>
     <div class="p-5 border-b border-steel-mid">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-lg bg-gold flex items-center justify-center">
@@ -100,26 +109,27 @@
 </aside>
 
 <!-- MAIN CONTENT -->
-<main id="mainContent" class="ml-64 min-h-screen">
+<main id="mainContent" class="md:ml-64 ml-0 min-h-screen">
 
 <!-- HEADER -->
-<header class="sticky top-0 z-40 bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+<header class="sticky top-0 z-40 bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center justify-between flex-wrap gap-2">
     <div class="flex items-center gap-3">
-        <h2 id="pageTitle" class="text-xl font-bold text-steel" data-en="Dashboard" data-ar="&#1604;&#1608;&#1581;&#1577; &#1575;&#1604;&#1578;&#1581;&#1603;&#1605;">Dashboard</h2>
-        <div id="pageBadges" class="flex gap-2">
+        <button onclick="toggleSidebar()" class="md:hidden text-steel text-xl p-1">&#9776;</button>
+        <h2 id="pageTitle" class="text-lg md:text-xl font-bold text-steel" data-en="Dashboard" data-ar="&#1604;&#1608;&#1581;&#1577; &#1575;&#1604;&#1578;&#1581;&#1603;&#1605;">Dashboard</h2>
+        <div id="pageBadges" class="hidden md:flex gap-2">
             <span class="badge-auto text-[10px] font-semibold px-2 py-0.5 rounded-full">AUTOMATIC</span>
             <span class="badge-semi text-[10px] font-semibold px-2 py-0.5 rounded-full">SEMI-AUTO</span>
         </div>
     </div>
-    <div class="flex items-center gap-4">
-        <button onclick="toggleLang()" id="langBtn" class="px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium hover:bg-gray-100 transition">
+    <div class="flex items-center gap-2 md:gap-4">
+        <button onclick="toggleLang()" id="langBtn" class="px-2 md:px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium hover:bg-gray-100 transition">
             <i class="fas fa-language mr-1"></i><span id="langLabel">AR</span>
         </button>
         <button class="relative text-gray-500 hover:text-steel transition">
             <i class="fas fa-bell text-lg"></i>
             <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] rounded-full flex items-center justify-center">3</span>
         </button>
-        <button class="bg-gold hover:bg-gold-light text-white px-4 py-2 rounded-lg text-sm font-semibold transition" data-en="+ New Inquiry" data-ar="+ &#1575;&#1587;&#1578;&#1601;&#1587;&#1575;&#1585; &#1580;&#1583;&#1610;&#1583;">+ New Inquiry</button>
+        <button class="bg-gold hover:bg-gold-light text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-semibold transition" data-en="+ New Inquiry" data-ar="+ &#1575;&#1587;&#1578;&#1601;&#1587;&#1575;&#1585; &#1580;&#1583;&#1610;&#1583;">+ New Inquiry</button>
     </div>
 </header>
 
@@ -128,7 +138,7 @@
 <!-- ========== 1. DASHBOARD ========== -->
 <div id="sec-dashboard" class="section active">
     <!-- KPI Cards -->
-    <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-steel-light">
             <p class="text-xs text-gray-500 uppercase" data-en="Active Leads" data-ar="&#1575;&#1604;&#1593;&#1605;&#1604;&#1575;&#1569; &#1575;&#1604;&#1606;&#1588;&#1591;&#1608;&#1606;">Active Leads</p>
             <p class="text-3xl font-bold text-steel mt-1">24</p>
@@ -150,7 +160,7 @@
             <p class="text-xs text-green-600 mt-1"><i class="fas fa-arrow-up"></i> 5% <span data-en="improvement" data-ar="&#1578;&#1581;&#1587;&#1606;">improvement</span></p>
         </div>
     </div>
-    <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500">
             <p class="text-xs text-gray-500 uppercase" data-en="Active Projects" data-ar="&#1605;&#1588;&#1575;&#1585;&#1610;&#1593; &#1606;&#1588;&#1591;&#1577;">Active Projects</p>
             <p class="text-3xl font-bold text-steel mt-1">12</p>
@@ -173,7 +183,7 @@
     <!-- Phase 1 Pipeline -->
     <div class="bg-white rounded-xl shadow-sm p-5 mb-6">
         <h3 class="font-bold text-steel mb-4" data-en="Phase 1 Pipeline" data-ar="&#1605;&#1587;&#1575;&#1585; &#1575;&#1604;&#1605;&#1585;&#1581;&#1604;&#1577; 1">Phase 1 Pipeline</h3>
-        <div class="flex gap-4 items-center justify-between">
+        <div class="flex gap-4 items-center justify-between flex-wrap">
             <div class="pipeline-step flex-1 text-center bg-blue-50 rounded-lg p-4">
                 <p class="text-2xl font-bold text-steel">8</p>
                 <p class="text-xs text-gray-600" data-en="Lead Capture" data-ar="&#1575;&#1604;&#1578;&#1602;&#1575;&#1591;">Lead Capture</p>
@@ -200,7 +210,7 @@
     <!-- Phase 2 Pipeline -->
     <div class="bg-white rounded-xl shadow-sm p-5 mb-6">
         <h3 class="font-bold text-steel mb-4" data-en="Phase 2 Pipeline" data-ar="&#1605;&#1587;&#1575;&#1585; &#1575;&#1604;&#1605;&#1585;&#1581;&#1604;&#1577; 2">Phase 2 Pipeline</h3>
-        <div class="flex gap-4 items-center justify-between">
+        <div class="flex gap-4 items-center justify-between flex-wrap">
             <div class="pipeline-step flex-1 text-center bg-indigo-50 rounded-lg p-4">
                 <p class="text-2xl font-bold text-steel">4</p>
                 <p class="text-xs text-gray-600" data-en="Handoff Queue" data-ar="&#1602;&#1575;&#1574;&#1605;&#1577; &#1575;&#1604;&#1578;&#1587;&#1604;&#1610;&#1605;">Handoff Queue</p>
@@ -225,10 +235,10 @@
     </div>
 
     <!-- Recent Inquiries -->
-    <div class="grid grid-cols-3 gap-6 mb-6">
-        <div class="col-span-2 bg-white rounded-xl shadow-sm p-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        <div class="col-span-1 sm:col-span-2 bg-white rounded-xl shadow-sm p-5">
             <h3 class="font-bold text-steel mb-4" data-en="Recent Inquiries" data-ar="&#1575;&#1604;&#1575;&#1587;&#1578;&#1601;&#1587;&#1575;&#1585;&#1575;&#1578; &#1575;&#1604;&#1571;&#1582;&#1610;&#1585;&#1577;">Recent Inquiries</h3>
-            <table class="w-full text-sm">
+            <div class="overflow-x-auto"><table class="w-full text-sm">
                 <thead><tr class="text-left text-gray-500 border-b">
                     <th class="pb-2" data-en="Reference" data-ar="&#1575;&#1604;&#1605;&#1585;&#1580;&#1593;">Reference</th>
                     <th class="pb-2" data-en="Client" data-ar="&#1575;&#1604;&#1593;&#1605;&#1610;&#1604;">Client</th>
@@ -242,7 +252,7 @@
                     <tr class="border-b border-gray-100"><td class="py-2 font-mono text-xs">PRJ-2024-085</td><td>Dubai Holdings</td><td data-en="Facade System" data-ar="&#1606;&#1592;&#1575;&#1605; &#1608;&#1575;&#1580;&#1607;&#1575;&#1578;">Facade System</td><td><span class="badge-manual text-xs px-2 py-0.5 rounded-full" data-en="Quoted" data-ar="&#1578;&#1605; &#1575;&#1604;&#1578;&#1587;&#1593;&#1610;&#1585;">Quoted</span></td><td>Apr 4</td></tr>
                     <tr><td class="py-2 font-mono text-xs">PRJ-2024-084</td><td>Nakheel PJSC</td><td data-en="Windows &amp; Doors" data-ar="&#1606;&#1608;&#1575;&#1601;&#1584; &#1608;&#1571;&#1576;&#1608;&#1575;&#1576;">Windows &amp; Doors</td><td><span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full" data-en="Won" data-ar="&#1601;&#1575;&#1586;">Won</span></td><td>Apr 3</td></tr>
                 </tbody>
-            </table>
+            </table></div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5">
             <h3 class="font-bold text-steel mb-4" data-en="Urgent Actions" data-ar="&#1573;&#1580;&#1585;&#1575;&#1569;&#1575;&#1578; &#1593;&#1575;&#1580;&#1604;&#1577;">Urgent Actions</h3>
@@ -281,8 +291,8 @@
 
 <!-- ========== 2. INQUIRY INTAKE ========== -->
 <div id="sec-intake" class="section">
-    <div class="grid grid-cols-3 gap-6">
-        <div class="col-span-2 bg-white rounded-xl shadow-sm p-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="col-span-1 sm:col-span-2 bg-white rounded-xl shadow-sm p-6">
             <div class="flex items-center justify-between mb-5">
                 <h3 class="font-bold text-steel" data-en="New Inquiry Form" data-ar="&#1606;&#1605;&#1608;&#1584;&#1580; &#1575;&#1587;&#1578;&#1601;&#1587;&#1575;&#1585; &#1580;&#1583;&#1610;&#1583;">New Inquiry Form</h3>
                 <div class="flex gap-2">
@@ -296,7 +306,7 @@
                 <span class="font-mono font-bold">PRJ-2024-088</span>
                 <span class="badge-auto text-[10px] px-1.5 py-0.5 rounded-full ml-2">AUTO</span>
             </div>
-            <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1" data-en="Client Name" data-ar="&#1575;&#1587;&#1605; &#1575;&#1604;&#1593;&#1605;&#1610;&#1604;">Client Name</label>
                     <input type="text" class="w-full border rounded-lg px-3 py-2 text-sm" placeholder="Enter client name">
@@ -359,9 +369,10 @@
         <select class="border rounded-lg px-3 py-1.5 text-sm"><option data-en="All Assigned" data-ar="&#1580;&#1605;&#1610;&#1593; &#1575;&#1604;&#1605;&#1593;&#1610;&#1606;&#1610;&#1606;">All Assigned</option><option>Ahmed K.</option><option>Sara M.</option><option>Omar H.</option></select>
     </div>
     <!-- Kanban Board -->
-    <div class="grid grid-cols-5 gap-4">
+    <div class="overflow-x-auto">
+    <div class="flex lg:grid lg:grid-cols-5 gap-4">
         <!-- Lead Capture -->
-        <div class="kanban-col">
+        <div class="kanban-col min-w-[200px]">
             <div class="bg-blue-100 text-blue-800 text-sm font-bold rounded-t-lg px-3 py-2 text-center" data-en="Lead Capture (8)" data-ar="&#1575;&#1604;&#1578;&#1602;&#1575;&#1591; (8)">Lead Capture (8)</div>
             <div class="bg-gray-100 rounded-b-lg p-2 space-y-2 min-h-[350px]">
                 <div class="bg-white rounded-lg p-3 shadow-sm border-l-4 border-blue-400 cursor-grab"><p class="font-medium text-sm">Al Futtaim Group</p><p class="text-xs text-gray-500">Curtain Wall</p><p class="text-xs text-gold font-semibold mt-1">AED 850K</p><div class="flex justify-between mt-2 text-[10px] text-gray-400"><span>2 days</span><span>Ahmed K.</span></div></div>
@@ -370,7 +381,7 @@
             </div>
         </div>
         <!-- Technical Clarification -->
-        <div class="kanban-col">
+        <div class="kanban-col min-w-[200px]">
             <div class="bg-purple-100 text-purple-800 text-sm font-bold rounded-t-lg px-3 py-2 text-center" data-en="Tech Clarification (6)" data-ar="&#1578;&#1608;&#1590;&#1610;&#1581; &#1601;&#1606;&#1610; (6)">Tech Clarification (6)</div>
             <div class="bg-gray-100 rounded-b-lg p-2 space-y-2 min-h-[350px]">
                 <div class="bg-white rounded-lg p-3 shadow-sm border-l-4 border-purple-400 cursor-grab"><p class="font-medium text-sm">Emaar Properties</p><p class="text-xs text-gray-500">Sliding Doors</p><p class="text-xs text-gold font-semibold mt-1">AED 1.2M</p><div class="flex justify-between mt-2 text-[10px] text-gray-400"><span>5 days</span><span>Ahmed K.</span></div></div>
@@ -378,7 +389,7 @@
             </div>
         </div>
         <!-- Proposal -->
-        <div class="kanban-col">
+        <div class="kanban-col min-w-[200px]">
             <div class="bg-yellow-100 text-yellow-800 text-sm font-bold rounded-t-lg px-3 py-2 text-center" data-en="Proposal (5)" data-ar="&#1575;&#1604;&#1593;&#1585;&#1590; (5)">Proposal (5)</div>
             <div class="bg-gray-100 rounded-b-lg p-2 space-y-2 min-h-[350px]">
                 <div class="bg-white rounded-lg p-3 shadow-sm border-l-4 border-yellow-400 cursor-grab"><p class="font-medium text-sm">Dubai Holdings</p><p class="text-xs text-gray-500">Facade System</p><p class="text-xs text-gold font-semibold mt-1">AED 2.1M</p><div class="flex justify-between mt-2 text-[10px] text-gray-400"><span>7 days</span><span>Ahmed K.</span></div></div>
@@ -386,14 +397,14 @@
             </div>
         </div>
         <!-- Decision -->
-        <div class="kanban-col">
+        <div class="kanban-col min-w-[200px]">
             <div class="bg-orange-100 text-orange-800 text-sm font-bold rounded-t-lg px-3 py-2 text-center" data-en="Decision (3)" data-ar="&#1575;&#1604;&#1602;&#1585;&#1575;&#1585; (3)">Decision (3)</div>
             <div class="bg-gray-100 rounded-b-lg p-2 space-y-2 min-h-[350px]">
                 <div class="bg-white rounded-lg p-3 shadow-sm border-l-4 border-orange-400 cursor-grab"><p class="font-medium text-sm">RAK Properties</p><p class="text-xs text-gray-500">Windows</p><p class="text-xs text-gold font-semibold mt-1">AED 410K</p><div class="flex justify-between mt-2 text-[10px] text-gray-400"><span>12 days</span><span>Sara M.</span></div></div>
             </div>
         </div>
         <!-- Won -->
-        <div class="kanban-col">
+        <div class="kanban-col min-w-[200px]">
             <div class="bg-green-100 text-green-800 text-sm font-bold rounded-t-lg px-3 py-2 text-center" data-en="Won (2)" data-ar="&#1601;&#1575;&#1586; (2)">Won (2)</div>
             <div class="bg-gray-100 rounded-b-lg p-2 space-y-2 min-h-[350px]">
                 <div class="bg-white rounded-lg p-3 shadow-sm border-l-4 border-green-400 cursor-grab"><p class="font-medium text-sm">Nakheel PJSC</p><p class="text-xs text-gray-500">Windows &amp; Doors</p><p class="text-xs text-gold font-semibold mt-1">AED 1.8M</p><div class="flex justify-between mt-2 text-[10px] text-gray-400"><span>Won Apr 3</span><span>Ahmed K.</span></div></div>
@@ -401,17 +412,18 @@
             </div>
         </div>
     </div>
+    </div>
 </div>
 
 <!-- ========== 4. QUOTATIONS ========== -->
 <div id="sec-quotations" class="section">
-    <div class="grid grid-cols-3 gap-6">
-        <div class="col-span-2 bg-white rounded-xl shadow-sm p-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="col-span-1 sm:col-span-2 bg-white rounded-xl shadow-sm p-5">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-bold text-steel" data-en="Quotation List" data-ar="&#1602;&#1575;&#1574;&#1605;&#1577; &#1593;&#1585;&#1608;&#1590; &#1575;&#1604;&#1571;&#1587;&#1593;&#1575;&#1585;">Quotation List</h3>
                 <button class="bg-gold hover:bg-gold-light text-white px-4 py-2 rounded-lg text-sm font-semibold" data-en="Generate Quote" data-ar="&#1573;&#1606;&#1588;&#1575;&#1569; &#1593;&#1585;&#1590; &#1587;&#1593;&#1585;">Generate Quote</button>
             </div>
-            <table class="w-full text-sm">
+            <div class="overflow-x-auto"><table class="w-full text-sm">
                 <thead><tr class="text-left text-gray-500 border-b">
                     <th class="pb-2" data-en="Reference" data-ar="&#1575;&#1604;&#1605;&#1585;&#1580;&#1593;">Reference</th>
                     <th class="pb-2" data-en="Client" data-ar="&#1575;&#1604;&#1593;&#1605;&#1610;&#1604;">Client</th>
@@ -427,7 +439,7 @@
                     <tr class="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"><td class="py-2 font-mono text-xs">QT-2024-042</td><td>DAMAC Properties</td><td>AED 750,000</td><td><span class="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-full" data-en="Rejected" data-ar="&#1605;&#1585;&#1601;&#1608;&#1590;">Rejected</span></td><td><i class="fas fa-times-circle text-red-500"></i></td><td>Mar 28</td></tr>
                     <tr class="hover:bg-gray-50 cursor-pointer"><td class="py-2 font-mono text-xs">QT-2024-041</td><td>Majid Al Futtaim</td><td>AED 560,000</td><td><span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full" data-en="Approved" data-ar="&#1605;&#1608;&#1575;&#1601;&#1602;">Approved</span></td><td><i class="fas fa-check-circle text-green-500"></i></td><td>Mar 25</td></tr>
                 </tbody>
-            </table>
+            </table></div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5">
             <h3 class="font-bold text-steel mb-4" data-en="Quote Detail: QT-2024-045" data-ar="&#1578;&#1601;&#1575;&#1589;&#1610;&#1604; &#1575;&#1604;&#1593;&#1585;&#1590;: QT-2024-045">Quote Detail: QT-2024-045</h3>
@@ -450,8 +462,8 @@
 
 <!-- ========== 5. COMMUNICATIONS ========== -->
 <div id="sec-comms" class="section">
-    <div class="grid grid-cols-3 gap-6">
-        <div class="col-span-2">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="col-span-1 sm:col-span-2">
             <!-- Channel Tabs -->
             <div class="bg-white rounded-xl shadow-sm mb-4">
                 <div class="flex border-b">
@@ -482,7 +494,7 @@
             <!-- Communication Log -->
             <div class="bg-white rounded-xl shadow-sm p-5">
                 <h3 class="font-bold text-steel mb-3" data-en="Communication Log" data-ar="&#1587;&#1580;&#1604; &#1575;&#1604;&#1575;&#1578;&#1589;&#1575;&#1604;&#1575;&#1578;">Communication Log</h3>
-                <table class="w-full text-sm">
+                <div class="overflow-x-auto"><table class="w-full text-sm">
                     <thead><tr class="text-left text-gray-500 border-b"><th class="pb-2" data-en="Date" data-ar="&#1575;&#1604;&#1578;&#1575;&#1585;&#1610;&#1582;">Date</th><th class="pb-2" data-en="Channel" data-ar="&#1575;&#1604;&#1602;&#1606;&#1575;&#1577;">Channel</th><th class="pb-2" data-en="Client" data-ar="&#1575;&#1604;&#1593;&#1605;&#1610;&#1604;">Client</th><th class="pb-2" data-en="Subject" data-ar="&#1575;&#1604;&#1605;&#1608;&#1590;&#1608;&#1593;">Subject</th><th class="pb-2" data-en="AI?" data-ar="&#1584;&#1603;&#1575;&#1569;&#1567;">AI?</th></tr></thead>
                     <tbody>
                         <tr class="border-b border-gray-100"><td class="py-2">Apr 6</td><td><i class="fab fa-whatsapp text-green-500"></i> WhatsApp</td><td>Al Futtaim</td><td>Initial inquiry</td><td><span class="badge-auto text-[9px] px-1.5 py-0.5 rounded-full">AI</span></td></tr>
@@ -490,7 +502,7 @@
                         <tr class="border-b border-gray-100"><td class="py-2">Apr 5</td><td><i class="fas fa-phone text-gray-500"></i> Phone</td><td>Dubai Holdings</td><td>Technical discussion</td><td><span class="badge-manual text-[9px] px-1.5 py-0.5 rounded-full">MANUAL</span></td></tr>
                         <tr><td class="py-2">Apr 4</td><td><i class="fas fa-globe text-purple-500"></i> Web</td><td>RAK Properties</td><td>Web form submission</td><td><span class="badge-auto text-[9px] px-1.5 py-0.5 rounded-full">AI</span></td></tr>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5">
@@ -516,7 +528,7 @@
     <div class="mb-4"><input type="text" class="w-full border rounded-lg px-4 py-2.5 text-sm" placeholder="Search documents..." data-en-placeholder="Search documents..." data-ar-placeholder="&#1576;&#1581;&#1579; &#1601;&#1610; &#1575;&#1604;&#1608;&#1579;&#1575;&#1574;&#1602;..."></div>
     <div class="mb-6">
         <h3 class="font-bold text-steel mb-3" data-en="SOPs" data-ar="&#1573;&#1580;&#1585;&#1575;&#1569;&#1575;&#1578; &#1575;&#1604;&#1578;&#1588;&#1594;&#1610;&#1604; &#1575;&#1604;&#1605;&#1608;&#1581;&#1583;&#1577;">SOPs</h3>
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition cursor-pointer"><i class="fas fa-file-alt text-steel-light text-2xl mb-3"></i><h4 class="font-medium text-sm" data-en="Inquiry Processing SOP" data-ar="&#1573;&#1580;&#1585;&#1575;&#1569; &#1605;&#1593;&#1575;&#1604;&#1580;&#1577; &#1575;&#1604;&#1575;&#1587;&#1578;&#1601;&#1587;&#1575;&#1585;&#1575;&#1578;">Inquiry Processing SOP</h4><p class="text-xs text-gray-400 mt-1">v3.2 &middot; Updated Mar 15</p></div>
             <div class="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition cursor-pointer"><i class="fas fa-file-alt text-steel-light text-2xl mb-3"></i><h4 class="font-medium text-sm" data-en="Quotation Workflow SOP" data-ar="&#1573;&#1580;&#1585;&#1575;&#1569; &#1587;&#1610;&#1585; &#1593;&#1605;&#1604; &#1575;&#1604;&#1578;&#1587;&#1593;&#1610;&#1585;">Quotation Workflow SOP</h4><p class="text-xs text-gray-400 mt-1">v2.8 &middot; Updated Mar 10</p></div>
             <div class="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition cursor-pointer"><i class="fas fa-file-alt text-steel-light text-2xl mb-3"></i><h4 class="font-medium text-sm" data-en="Installation Safety SOP" data-ar="&#1573;&#1580;&#1585;&#1575;&#1569; &#1587;&#1604;&#1575;&#1605;&#1577; &#1575;&#1604;&#1578;&#1585;&#1603;&#1610;&#1576;">Installation Safety SOP</h4><p class="text-xs text-gray-400 mt-1">v4.1 &middot; Updated Apr 1</p></div>
@@ -524,7 +536,7 @@
     </div>
     <div class="mb-6">
         <h3 class="font-bold text-steel mb-3" data-en="Templates" data-ar="&#1575;&#1604;&#1602;&#1608;&#1575;&#1604;&#1576;">Templates</h3>
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition cursor-pointer"><i class="fas fa-file-invoice text-gold text-2xl mb-3"></i><h4 class="font-medium text-sm" data-en="Quote Template" data-ar="&#1602;&#1575;&#1604;&#1576; &#1593;&#1585;&#1590; &#1575;&#1604;&#1587;&#1593;&#1585;">Quote Template</h4><p class="text-xs text-gray-400 mt-1">v5.0 &middot; Updated Apr 2</p></div>
             <div class="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition cursor-pointer"><i class="fas fa-file-contract text-gold text-2xl mb-3"></i><h4 class="font-medium text-sm" data-en="Contract Template" data-ar="&#1602;&#1575;&#1604;&#1576; &#1575;&#1604;&#1593;&#1602;&#1583;">Contract Template</h4><p class="text-xs text-gray-400 mt-1">v3.1 &middot; Updated Mar 20</p></div>
             <div class="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition cursor-pointer"><i class="fas fa-file-signature text-gold text-2xl mb-3"></i><h4 class="font-medium text-sm" data-en="Handover Template" data-ar="&#1602;&#1575;&#1604;&#1576; &#1575;&#1604;&#1578;&#1587;&#1604;&#1610;&#1605;">Handover Template</h4><p class="text-xs text-gray-400 mt-1">v2.0 &middot; Updated Mar 18</p></div>
@@ -532,7 +544,7 @@
     </div>
     <div>
         <h3 class="font-bold text-steel mb-3" data-en="Checklists" data-ar="&#1602;&#1608;&#1575;&#1574;&#1605; &#1575;&#1604;&#1601;&#1581;&#1589;">Checklists</h3>
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition cursor-pointer"><i class="fas fa-clipboard-check text-green-600 text-2xl mb-3"></i><h4 class="font-medium text-sm" data-en="QA Inspection Checklist" data-ar="&#1602;&#1575;&#1574;&#1605;&#1577; &#1601;&#1581;&#1589; &#1575;&#1604;&#1580;&#1608;&#1583;&#1577;">QA Inspection Checklist</h4><p class="text-xs text-gray-400 mt-1">v6.0 &middot; Updated Apr 5</p></div>
             <div class="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition cursor-pointer"><i class="fas fa-clipboard-check text-green-600 text-2xl mb-3"></i><h4 class="font-medium text-sm" data-en="Site Safety Checklist" data-ar="&#1602;&#1575;&#1574;&#1605;&#1577; &#1587;&#1604;&#1575;&#1605;&#1577; &#1575;&#1604;&#1605;&#1608;&#1602;&#1593;">Site Safety Checklist</h4><p class="text-xs text-gray-400 mt-1">v4.3 &middot; Updated Mar 30</p></div>
             <div class="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition cursor-pointer"><i class="fas fa-clipboard-check text-green-600 text-2xl mb-3"></i><h4 class="font-medium text-sm" data-en="Handover Checklist" data-ar="&#1602;&#1575;&#1574;&#1605;&#1577; &#1575;&#1604;&#1578;&#1587;&#1604;&#1610;&#1605;">Handover Checklist</h4><p class="text-xs text-gray-400 mt-1">v3.5 &middot; Updated Mar 25</p></div>
@@ -542,8 +554,8 @@
 
 <!-- ========== 7. PHASE 1→2 HANDOFF ========== -->
 <div id="sec-handoff" class="section">
-    <div class="grid grid-cols-3 gap-6">
-        <div class="col-span-2">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="col-span-1 sm:col-span-2">
             <div class="bg-white rounded-xl shadow-sm p-5 mb-6">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold text-steel" data-en="Handoff Checklist - PRJ-2024-084 (Nakheel)" data-ar="&#1602;&#1575;&#1574;&#1605;&#1577; &#1575;&#1604;&#1578;&#1587;&#1604;&#1610;&#1605; - PRJ-2024-084 (&#1606;&#1582;&#1610;&#1604;)">Handoff Checklist - PRJ-2024-084 (Nakheel)</h3>
@@ -563,7 +575,7 @@
             <!-- Handoff Queue -->
             <div class="bg-white rounded-xl shadow-sm p-5">
                 <h3 class="font-bold text-steel mb-4" data-en="Projects in Handoff Queue" data-ar="&#1605;&#1588;&#1575;&#1585;&#1610;&#1593; &#1601;&#1610; &#1602;&#1575;&#1574;&#1605;&#1577; &#1575;&#1604;&#1578;&#1587;&#1604;&#1610;&#1605;">Projects in Handoff Queue</h3>
-                <table class="w-full text-sm">
+                <div class="overflow-x-auto"><table class="w-full text-sm">
                     <thead><tr class="text-left text-gray-500 border-b"><th class="pb-2" data-en="Project" data-ar="&#1575;&#1604;&#1605;&#1588;&#1585;&#1608;&#1593;">Project</th><th class="pb-2" data-en="Client" data-ar="&#1575;&#1604;&#1593;&#1605;&#1610;&#1604;">Client</th><th class="pb-2" data-en="Checks" data-ar="&#1575;&#1604;&#1601;&#1581;&#1608;&#1589;&#1575;&#1578;">Checks</th><th class="pb-2" data-en="Status" data-ar="&#1575;&#1604;&#1581;&#1575;&#1604;&#1577;">Status</th></tr></thead>
                     <tbody>
                         <tr class="border-b border-gray-100"><td class="py-2 font-mono text-xs">PRJ-2024-084</td><td>Nakheel PJSC</td><td>5/5</td><td><span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">Ready</span></td></tr>
@@ -571,7 +583,7 @@
                         <tr class="border-b border-gray-100"><td class="py-2 font-mono text-xs">PRJ-2024-078</td><td>Aldar Properties</td><td>3/5</td><td><span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded-full">Pending</span></td></tr>
                         <tr><td class="py-2 font-mono text-xs">PRJ-2024-075</td><td>Omniyat Group</td><td>1/5</td><td><span class="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-full">Blocked</span></td></tr>
                     </tbody>
-                </table>
+                </table></div>
             </div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5">
@@ -596,15 +608,15 @@
         <span class="badge-must text-[10px] px-2 py-0.5 rounded-full font-semibold">MUST ADD: Client E-Approval</span>
         <span class="badge-must text-[10px] px-2 py-0.5 rounded-full font-semibold">MUST ADD: BOM Auto-Export</span>
     </div>
-    <div class="grid grid-cols-3 gap-6">
-        <div class="col-span-2">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="col-span-1 sm:col-span-2">
             <!-- Drawing Version Control -->
             <div class="bg-white rounded-xl shadow-sm p-5 mb-6">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold text-steel" data-en="Drawing Version Control" data-ar="&#1578;&#1581;&#1603;&#1605; &#1576;&#1573;&#1589;&#1583;&#1575;&#1585;&#1575;&#1578; &#1575;&#1604;&#1585;&#1587;&#1608;&#1605;&#1575;&#1578;">Drawing Version Control</h3>
                     <button class="bg-steel hover:bg-steel-mid text-white px-4 py-2 rounded-lg text-sm font-semibold" data-en="LogiKal BOM Export" data-ar="&#1578;&#1589;&#1583;&#1610;&#1585; BOM &#1605;&#1606; LogiKal">LogiKal BOM Export</button>
                 </div>
-                <table class="w-full text-sm">
+                <div class="overflow-x-auto"><table class="w-full text-sm">
                     <thead><tr class="text-left text-gray-500 border-b"><th class="pb-2" data-en="Drawing" data-ar="&#1575;&#1604;&#1585;&#1587;&#1605;">Drawing</th><th class="pb-2" data-en="Version" data-ar="&#1575;&#1604;&#1573;&#1589;&#1583;&#1575;&#1585;">Version</th><th class="pb-2" data-en="Status" data-ar="&#1575;&#1604;&#1581;&#1575;&#1604;&#1577;">Status</th><th class="pb-2" data-en="By" data-ar="&#1576;&#1608;&#1575;&#1587;&#1591;&#1577;">By</th><th class="pb-2" data-en="Date" data-ar="&#1575;&#1604;&#1578;&#1575;&#1585;&#1610;&#1582;">Date</th></tr></thead>
                     <tbody>
                         <tr class="border-b border-gray-100"><td class="py-2">Floor Plan - Level 1</td><td><span class="font-mono text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">FINAL-APPROVED</span></td><td><span class="text-green-600"><i class="fas fa-check-circle"></i></span></td><td>Eng. Khalid</td><td>Apr 4</td></tr>
@@ -613,12 +625,12 @@
                         <tr class="border-b border-gray-100"><td class="py-2">Mullion Detail - Type B</td><td><span class="font-mono text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">FINAL-APPROVED</span></td><td><span class="text-green-600"><i class="fas fa-check-circle"></i></span></td><td>Eng. Fatima</td><td>Apr 1</td></tr>
                         <tr><td class="py-2">Glass Schedule</td><td><span class="font-mono text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded">V3</span></td><td><span class="text-purple-600"><i class="fas fa-user-check"></i> <span data-en="Engineer Review" data-ar="&#1605;&#1585;&#1575;&#1580;&#1593;&#1577; &#1575;&#1604;&#1605;&#1607;&#1606;&#1583;&#1587;">Engineer Review</span></span></td><td>Eng. Khalid</td><td>Mar 30</td></tr>
                     </tbody>
-                </table>
+                </table></div>
             </div>
             <!-- Version Comparison Placeholder -->
             <div class="bg-white rounded-xl shadow-sm p-5 mb-6">
                 <h3 class="font-bold text-steel mb-3" data-en="Version Comparison" data-ar="&#1605;&#1602;&#1575;&#1585;&#1606;&#1577; &#1575;&#1604;&#1573;&#1589;&#1583;&#1575;&#1585;&#1575;&#1578;">Version Comparison</h3>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="bg-gray-100 rounded-lg p-8 text-center text-gray-400"><i class="fas fa-image text-4xl mb-2"></i><p class="text-sm">V1 - Original</p></div>
                     <div class="bg-gray-100 rounded-lg p-8 text-center text-gray-400"><i class="fas fa-image text-4xl mb-2"></i><p class="text-sm">V2 - Current</p></div>
                 </div>
@@ -660,7 +672,7 @@
     <!-- BOM -->
     <div class="bg-white rounded-xl shadow-sm p-5 mb-6">
         <h3 class="font-bold text-steel mb-4" data-en="Bill of Materials (from LogiKal)" data-ar="&#1602;&#1575;&#1574;&#1605;&#1577; &#1575;&#1604;&#1605;&#1608;&#1575;&#1583; (&#1605;&#1606; LogiKal)">Bill of Materials (from LogiKal)</h3>
-        <table class="w-full text-sm">
+        <div class="overflow-x-auto"><table class="w-full text-sm">
             <thead><tr class="text-left text-gray-500 border-b"><th class="pb-2" data-en="Item" data-ar="&#1575;&#1604;&#1593;&#1606;&#1589;&#1585;">Item</th><th class="pb-2" data-en="Profile/Spec" data-ar="&#1575;&#1604;&#1605;&#1602;&#1591;&#1593;/&#1575;&#1604;&#1605;&#1608;&#1575;&#1589;&#1601;&#1575;&#1578;">Profile/Spec</th><th class="pb-2" data-en="Qty" data-ar="&#1575;&#1604;&#1603;&#1605;&#1610;&#1577;">Qty</th><th class="pb-2" data-en="Unit" data-ar="&#1575;&#1604;&#1608;&#1581;&#1583;&#1577;">Unit</th><th class="pb-2" data-en="Status" data-ar="&#1575;&#1604;&#1581;&#1575;&#1604;&#1577;">Status</th></tr></thead>
             <tbody>
                 <tr class="border-b border-gray-100"><td class="py-2">Aluminum Profile</td><td>Schuco FWS 60+</td><td>2,450</td><td>LM</td><td><span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">Ordered</span></td></tr>
@@ -668,21 +680,21 @@
                 <tr class="border-b border-gray-100"><td class="py-2">Gaskets</td><td>EPDM 15x8mm</td><td>5,200</td><td>LM</td><td><span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">In Stock</span></td></tr>
                 <tr><td class="py-2">Anchors</td><td>Hilti HST3 M12</td><td>1,240</td><td>PCS</td><td><span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">Quoted</span></td></tr>
             </tbody>
-        </table>
+        </table></div>
     </div>
 
     <!-- PO List + Delivery Alerts -->
-    <div class="grid grid-cols-2 gap-6 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
         <div class="bg-white rounded-xl shadow-sm p-5">
             <h3 class="font-bold text-steel mb-4" data-en="Purchase Orders" data-ar="&#1571;&#1608;&#1575;&#1605;&#1585; &#1575;&#1604;&#1588;&#1585;&#1575;&#1569;">Purchase Orders</h3>
-            <table class="w-full text-sm">
+            <div class="overflow-x-auto"><table class="w-full text-sm">
                 <thead><tr class="text-left text-gray-500 border-b"><th class="pb-2">PO#</th><th class="pb-2" data-en="Supplier" data-ar="&#1575;&#1604;&#1605;&#1608;&#1585;&#1583;">Supplier</th><th class="pb-2" data-en="Amount" data-ar="&#1575;&#1604;&#1605;&#1576;&#1604;&#1594;">Amount</th><th class="pb-2" data-en="Status" data-ar="&#1575;&#1604;&#1581;&#1575;&#1604;&#1577;">Status</th><th class="pb-2">ETA</th></tr></thead>
                 <tbody>
                     <tr class="border-b border-gray-100"><td class="py-2 font-mono text-xs">PO-2024-041</td><td>Schuco ME</td><td>AED 480K</td><td><span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">In Transit</span></td><td>Apr 10</td></tr>
                     <tr class="border-b border-gray-100"><td class="py-2 font-mono text-xs">PO-2024-040</td><td>Gulf Glass</td><td>AED 320K</td><td><span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">Delivered</span></td><td>Apr 3</td></tr>
                     <tr><td class="py-2 font-mono text-xs">PO-2024-039</td><td>Hilti UAE</td><td>AED 85K</td><td><span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded-full">Processing</span></td><td>Apr 15</td></tr>
                 </tbody>
-            </table>
+            </table></div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5">
             <h3 class="font-bold text-steel mb-4" data-en="Supplier Delivery Alerts" data-ar="&#1578;&#1606;&#1576;&#1610;&#1607;&#1575;&#1578; &#1575;&#1604;&#1578;&#1608;&#1589;&#1610;&#1604;">Supplier Delivery Alerts</h3>
@@ -695,7 +707,7 @@
     </div>
 
     <!-- Gantt + QA -->
-    <div class="grid grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div class="bg-white rounded-xl shadow-sm p-5">
             <h3 class="font-bold text-steel mb-4" data-en="Factory Schedule" data-ar="&#1580;&#1583;&#1608;&#1604; &#1575;&#1604;&#1605;&#1589;&#1606;&#1593;">Factory Schedule</h3>
             <div class="space-y-3">
@@ -728,18 +740,18 @@
         <span class="badge-must text-[10px] px-2 py-0.5 rounded-full font-semibold">MUST ADD: Safety Checklist</span>
     </div>
 
-    <div class="grid grid-cols-3 gap-6 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <!-- Site Issues -->
-        <div class="col-span-2 bg-white rounded-xl shadow-sm p-5">
+        <div class="col-span-1 sm:col-span-2 bg-white rounded-xl shadow-sm p-5">
             <h3 class="font-bold text-steel mb-4" data-en="Site Issue Tickets" data-ar="&#1578;&#1584;&#1575;&#1603;&#1585; &#1605;&#1588;&#1575;&#1603;&#1604; &#1575;&#1604;&#1605;&#1608;&#1602;&#1593;">Site Issue Tickets</h3>
-            <table class="w-full text-sm">
+            <div class="overflow-x-auto"><table class="w-full text-sm">
                 <thead><tr class="text-left text-gray-500 border-b"><th class="pb-2">ID</th><th class="pb-2" data-en="Description" data-ar="&#1575;&#1604;&#1608;&#1589;&#1601;">Description</th><th class="pb-2" data-en="Priority" data-ar="&#1575;&#1604;&#1571;&#1608;&#1604;&#1608;&#1610;&#1577;">Priority</th><th class="pb-2" data-en="Status" data-ar="&#1575;&#1604;&#1581;&#1575;&#1604;&#1577;">Status</th><th class="pb-2" data-en="Photo" data-ar="&#1589;&#1608;&#1585;&#1577;">Photo</th></tr></thead>
                 <tbody>
                     <tr class="border-b border-gray-100"><td class="py-2 font-mono text-xs">ISSUE-084-001</td><td>Water ingress at Zone B joint</td><td><span class="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-full">High</span></td><td><span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded-full" data-en="In Progress" data-ar="&#1602;&#1610;&#1583; &#1575;&#1604;&#1578;&#1606;&#1601;&#1610;&#1584;">In Progress</span></td><td><i class="fas fa-camera text-gray-400"></i></td></tr>
                     <tr class="border-b border-gray-100"><td class="py-2 font-mono text-xs">ISSUE-084-002</td><td>Alignment deviation Level 12</td><td><span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded-full">Medium</span></td><td><span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full" data-en="Open" data-ar="&#1605;&#1601;&#1578;&#1608;&#1581;">Open</span></td><td><i class="fas fa-camera text-gray-400"></i></td></tr>
                     <tr><td class="py-2 font-mono text-xs">ISSUE-084-003</td><td>Scratched glass panel Zone A</td><td><span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">Low</span></td><td><span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full" data-en="Resolved" data-ar="&#1578;&#1605; &#1575;&#1604;&#1581;&#1604;">Resolved</span></td><td><i class="fas fa-camera text-gray-400"></i></td></tr>
                 </tbody>
-            </table>
+            </table></div>
         </div>
         <!-- Daily Bot Report -->
         <div class="bg-white rounded-xl shadow-sm p-5">
@@ -757,7 +769,7 @@
     </div>
 
     <!-- Progress + Safety -->
-    <div class="grid grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div class="bg-white rounded-xl shadow-sm p-5">
             <h3 class="font-bold text-steel mb-4" data-en="Installation Progress" data-ar="&#1578;&#1602;&#1583;&#1605; &#1575;&#1604;&#1578;&#1585;&#1603;&#1610;&#1576;">Installation Progress</h3>
             <div class="space-y-4">
@@ -789,7 +801,7 @@
         <span class="badge-must text-[10px] px-2 py-0.5 rounded-full font-semibold">MUST ADD: Satisfaction Survey</span>
     </div>
 
-    <div class="grid grid-cols-3 gap-6 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <!-- Handover Checklist -->
         <div class="bg-white rounded-xl shadow-sm p-5">
             <h3 class="font-bold text-steel mb-4" data-en="Handover Checklist" data-ar="&#1602;&#1575;&#1574;&#1605;&#1577; &#1575;&#1604;&#1578;&#1587;&#1604;&#1610;&#1605;">Handover Checklist</h3>
@@ -837,7 +849,7 @@
     <!-- Satisfaction Survey -->
     <div class="bg-white rounded-xl shadow-sm p-5">
         <h3 class="font-bold text-steel mb-4" data-en="Client Satisfaction Survey" data-ar="&#1575;&#1587;&#1578;&#1576;&#1610;&#1575;&#1606; &#1585;&#1590;&#1575; &#1575;&#1604;&#1593;&#1605;&#1610;&#1604;">Client Satisfaction Survey</h3>
-        <div class="grid grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div class="space-y-4">
                 <div><label class="block text-sm font-medium mb-1" data-en="Overall Quality (1-10)" data-ar="&#1575;&#1604;&#1580;&#1608;&#1583;&#1577; &#1575;&#1604;&#1593;&#1575;&#1605;&#1577; (1-10)">Overall Quality (1-10)</label><input type="range" min="1" max="10" value="8" class="w-full accent-gold"><div class="flex justify-between text-xs text-gray-400"><span>1</span><span>10</span></div></div>
                 <div><label class="block text-sm font-medium mb-1" data-en="Timeliness (1-10)" data-ar="&#1575;&#1604;&#1575;&#1604;&#1578;&#1586;&#1575;&#1605; &#1576;&#1575;&#1604;&#1605;&#1608;&#1575;&#1593;&#1610;&#1583; (1-10)">Timeliness (1-10)</label><input type="range" min="1" max="10" value="7" class="w-full accent-gold"><div class="flex justify-between text-xs text-gray-400"><span>1</span><span>10</span></div></div>
@@ -901,15 +913,15 @@ function toggleLang() {
         html.setAttribute('lang', 'ar');
         document.getElementById('sidebar').classList.remove('left-0');
         document.getElementById('sidebar').classList.add('right-0');
-        document.getElementById('mainContent').classList.remove('ml-64');
-        document.getElementById('mainContent').classList.add('mr-64');
+        document.getElementById('mainContent').classList.remove('md:ml-64');
+        document.getElementById('mainContent').classList.add('md:mr-64');
     } else {
         html.setAttribute('dir', 'ltr');
         html.setAttribute('lang', 'en');
         document.getElementById('sidebar').classList.remove('right-0');
         document.getElementById('sidebar').classList.add('left-0');
-        document.getElementById('mainContent').classList.remove('mr-64');
-        document.getElementById('mainContent').classList.add('ml-64');
+        document.getElementById('mainContent').classList.remove('md:mr-64');
+        document.getElementById('mainContent').classList.add('md:ml-64');
     }
     document.getElementById('langLabel').textContent = currentLang === 'en' ? 'AR' : 'EN';
 
@@ -933,6 +945,13 @@ function toggleLang() {
             document.getElementById('pageTitle').textContent = sectionMap[sec].title[currentLang];
         }
     }
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('hidden');
 }
 </script>
 
