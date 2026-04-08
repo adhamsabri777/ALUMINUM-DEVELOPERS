@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aluminum Developers — Full System Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --steel:#162D4E;--steel-light:#1E3A5F;--steel-lighter:#2A4A72;
+  --gold:#D4922A;--gold-light:#E5A840;--gold-lighter:#F0C060;--gold-bg:#FDF8F0;
+  --white:#FFFFFF;--gray-50:#F9FAFB;--gray-100:#F3F4F6;--gray-200:#E5E7EB;
+  --gray-300:#D1D5DB;--gray-400:#9CA3AF;--gray-500:#6B7280;--gray-600:#4B5563;
+  --gray-700:#374151;--gray-800:#1F2937;
+  --green:#22C55E;--yellow:#EAB308;--blue:#3B82F6;--red:#EF4444;
+  --shadow:0 2px 12px rgba(0,0,0,.08);
+  --shadow-lg:0 6px 24px rgba(0,0,0,.14);
+}
+html{font-family:'Inter',system-ui,sans-serif;background:var(--gray-50);color:var(--gray-800);scroll-behavior:smooth}
+body{min-height:100vh}
+
+/* TOP BAR */
+.topbar{background:var(--steel);color:#fff;padding:12px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.topbar a{color:var(--gold-light);text-decoration:none;font-weight:600;font-size:13px;transition:color .2s;white-space:nowrap}
+.topbar a:hover{color:#fff}
+.topbar .title-group{text-align:center;flex:1;padding:0 20px}
+.topbar h1{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.topbar p{font-size:11px;color:var(--gray-300);margin-top:2px}
+.controls{display:flex;gap:6px;align-items:center}
+.controls button{background:var(--steel-lighter);border:1px solid rgba(255,255,255,.15);color:#fff;padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.controls button:hover{background:var(--gold);border-color:var(--gold)}
+.zoom-label{font-size:11px;color:var(--gray-300);min-width:36px;text-align:center}
+
+/* MAIN CONTENT */
+.page{max-width:1400px;margin:0 auto;padding:32px 40px 120px;position:relative}
+
+/* SECTION */
+.section{margin-bottom:40px}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.section-header .bar{width:5px;height:26px;border-radius:3px;flex-shrink:0}
+.section-header h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-700)}
+.section-header .sub{font-size:11px;color:var(--gray-400);margin-left:auto}
+
+/* CARD */
+.card{background:#fff;border-radius:10px;box-shadow:var(--shadow);border:1px solid var(--gray-100);padding:16px 18px;transition:box-shadow .15s,transform .15s}
+.card:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+.card-title{font-size:12px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.card-body{font-size:10.5px;color:var(--gray-500);line-height:1.6}
+.card-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap;letter-spacing:.2px}
+.badge.auto{background:#DCFCE7;color:#15803D}.badge.auto::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green)}
+.badge.semi{background:#FEF9C3;color:#A16207}.badge.semi::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--yellow)}
+.badge.manual{background:#DBEAFE;color:#1D4ED8}.badge.manual::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--blue)}
+.badge.mustadd{background:#FEE2E2;color:#B91C1C}.badge.mustadd::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--red)}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+
+/* BORDER ACCENTS */
+.bl-steel{border-left:3px solid var(--steel)}
+.bl-gold{border-left:3px solid var(--gold)}
+.bl-gray{border-left:3px solid var(--gray-300)}
+.bl-green{border-left:3px solid var(--green)}
+
+/* ====== INPUT CHANNELS GRID ====== */
+.input-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.input-card{text-align:center;padding:20px 14px}
+.input-card .card-icon{margin:0 auto 8px;width:42px;height:42px;font-size:20px}
+
+/* ====== HUB ====== */
+.hub-row{display:flex;justify-content:center;align-items:center;gap:28px}
+.hub-center{background:linear-gradient(135deg,var(--steel),var(--steel-lighter));color:#fff;border-radius:14px;padding:24px 36px;box-shadow:var(--shadow-lg);text-align:center;min-width:200px;border:2px solid rgba(255,255,255,.08)}
+.hub-center h3{font-size:17px;font-weight:800}
+.hub-center p{font-size:10px;color:var(--gray-300);margin-top:3px}
+.hub-detail{font-size:9px;color:rgba(255,255,255,.5);margin-top:8px;line-height:1.6}
+.hub-side{min-width:180px}
+.hub-side .card-icon{margin:0 auto 8px;background:rgba(212,146,42,.1);color:var(--gold)}
+
+/* ====== DOWN ARROW CONNECTOR ====== */
+.connector{display:flex;justify-content:center;padding:6px 0}
+.connector svg{display:block}
+
+/* ====== MAIN 3-COLUMN GRID ====== */
+.main-3col{display:grid;grid-template-columns:1fr 240px 1fr;gap:20px;align-items:start}
+.col{display:flex;flex-direction:column;gap:14px}
+
+/* PIPELINE */
+.pipeline{display:flex;gap:0;margin-top:8px;border-radius:6px;overflow:hidden}
+.pipeline .stg{flex:1;text-align:center;padding:5px 2px;font-size:8px;font-weight:700;color:#fff;letter-spacing:.3px}
+.pipeline .stg:nth-child(1){background:#64748B}
+.pipeline .stg:nth-child(2){background:#7C8FA8}
+.pipeline .stg:nth-child(3){background:var(--steel-lighter)}
+.pipeline .stg:nth-child(4){background:var(--steel-light)}
+.pipeline .stg:nth-child(5){background:var(--steel)}
+
+/* HANDOFF */
+.handoff{background:linear-gradient(180deg,#FEF9EC,#FEF3C7);border:2px dashed var(--gold);border-radius:14px;padding:20px 16px}
+.handoff h3{font-size:13px;font-weight:700;color:var(--gold);text-align:center;margin-bottom:12px}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:flex-start;gap:8px;font-size:11px;padding:5px 0;border-bottom:1px solid rgba(212,146,42,.12);line-height:1.4;color:var(--gray-700)}
+.checklist li:last-child{border-bottom:none}
+.chk{width:18px;height:18px;background:var(--green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px}
+
+/* SUB-PHASE */
+.sp{padding-left:12px;border-left:3px solid var(--gold)}
+.sp-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--gold);margin-bottom:4px}
+.sp-items{font-size:10.5px;color:var(--gray-500);line-height:1.7}
+
+/* FLOW LABEL */
+.flow-label{text-align:center;font-size:9px;font-weight:700;letter-spacing:.4px;padding:6px 0}
+
+/* ====== DATA & OUTPUT GRIDS ====== */
+.three-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.three-grid .card{text-align:center;padding:18px 14px}
+.three-grid .card-icon{margin:0 auto 8px;width:40px;height:40px;font-size:18px;border-radius:10px}
+
+/* ====== LEGEND ====== */
+.legend{position:fixed;bottom:16px;right:16px;z-index:99}
+.legend-box{background:#fff;border-radius:10px;box-shadow:var(--shadow-lg);border:1px solid var(--gray-200);padding:14px 18px;max-width:260px;transition:opacity .2s,transform .2s}
+.legend-box.hidden{opacity:0;transform:translateY(10px);pointer-events:none}
+.legend h4{font-size:11px;font-weight:700;color:var(--steel);margin-bottom:8px}
+.legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--gray-600)}
+.legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.legend-swatch{width:20px;height:6px;border-radius:2px;flex-shrink:0}
+.legend-divider{grid-column:1/-1;height:1px;background:var(--gray-200);margin:3px 0}
+.legend-toggle{background:var(--steel);color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer;font-family:inherit;box-shadow:var(--shadow)}
+.legend-toggle:hover{background:var(--gold)}
+
+/* ====== CONNECTION LINES (CSS-based) ====== */
+.conn-down{display:flex;justify-content:center;padding:2px 0}
+.conn-down .line{width:2px;height:24px;background:var(--gray-300);position:relative}
+.conn-down .line::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--gray-300)}
+.conn-label{font-size:8px;color:var(--gray-400);text-align:center;margin-top:-2px;margin-bottom:2px}
+
+/* Small flow arrow */
+.flow-arrow{display:flex;align-items:center;justify-content:center;padding:2px 0;color:var(--gold);font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html">&larr; Back to Dashboard</a>
+  <div class="title-group">
+    <h1>Aluminum Developers &mdash; Full System Architecture</h1>
+    <p>Phase 1 (Sales &amp; CRM) + Phase 2 (Delivery) &mdash; Integrated Automation Platform</p>
+  </div>
+  <div class="controls">
+    <button onclick="document.querySelector('.page').style.zoom=(z=Math.max(.5,(parseFloat(document.querySelector('.page').style.zoom||1)-.1))),document.getElementById('zl').textContent=Math.round(z*100)+'%'">&#8722;</button>
+    <span class="zoom-label" id="zl">100%</span>
+    <button onclick="document.querySelector('.page').style.zoom=(z=Math.min(1.5,(parseFloat(document.querySelector('.page').style.zoom||1)+.1))),document.getElementById('zl').textContent=Math.round(z*100)+'%'">&#43;</button>
+    <button onclick="document.querySelector('.page').style.zoom=1,document.getElementById('zl').textContent='100%'">Reset</button>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- ================================================================== -->
+<!--  LAYER 1: INPUT CHANNELS                                          -->
+<!-- ================================================================== -->
+<div class="section">
+  <div class="section-header">
+    <div class="bar" style="background:var(--steel)"></div>
+    <h2>Layer 1 &mdash; Input Channels</h2>
+    <span class="sub">Customer touchpoints feeding into the system</span>
+  </div>
+  <div class="input-grid">
+    <div class="card input-card">
+      <div class="card-icon" style="background:#DCF8C6;color:#25D366">&#128172;</div>
+      <div class="card-title" style="justify-content:center">WhatsApp</div>
+      <div class="card-body">via Twilio API<br>Incoming messages, media &amp; enquiries</div>
+      <div class="badges" style="justify-content:center"><span class="badge auto">AUTOMATIC</span></div>
+    </div>
+    <div class="card input-card">
+      <div class="card-icon" style="background:#FEE2E2;color:#EA4335">&#9993;</div>
+      <div class="card-title" style="justify-content:center">Email</div>
+      <div class="card-body">Gmail Integration<br>Enquiries, attachments, RFQs</div>
+      <div class="badges" style="justify-content:center"><span class="badge auto">AUTOMATIC</span></div>
+    </div>
+    <div class="card input-card">
+      <div class="card-icon" style="background:#DBEAFE;color:#3B82F6">&#127760;</div>
+      <div class="card-title" style="justify-content:center">Web Form</div>
+      <div class="card-body">Website Contact Form<br>Name, project details, uploads</div>
+      <div class="badges" style="justify-content:center"><span class="badge auto">AUTOMATIC</span></div>
+    </div>
+    <div class="card input-card">
+      <div class="card-icon" style="background:#E5E7EB;color:#6B7280">&#128222;</div>
+      <div class="card-title" style="justify-content:center">Phone</div>
+      <div class="card-body">Manual Entry<br>Call notes &amp; follow-up tasks</div>
+      <div class="badges" style="justify-content:center"><span class="badge manual">MANUAL</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Down arrows -->
+<div style="display:flex;justify-content:center;gap:0;margin:-20px 0 -10px">
+  <svg width="400" height="50" viewBox="0 0 400 50">
+    <defs><marker id="ad" markerWidth="6" markerHeight="5" refX="3" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5" fill="#9CA3AF"/></marker></defs>
+    <line x1="60" y1="0" x2="200" y2="44" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ad)"/>
+    <line x1="150" y1="0" x2="200" y2="44" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ad)"/>
+    <line x1="250" y1="0" x2="200" y2="44" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ad)"/>
+    <line x1="340" y1="0" x2="200" y2="44" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ad)"/>
+    <text x="80" y="18" font-size="7" fill="#9CA3AF" font-family="Inter">WhatsApp msgs</text>
+    <text x="145" y="10" font-size="7" fill="#9CA3AF" font-family="Inter">Emails</text>
+    <text x="245" y="10" font-size="7" fill="#9CA3AF" font-family="Inter">Forms</text>
+    <text x="300" y="18" font-size="7" fill="#9CA3AF" font-family="Inter">Call notes</text>
+  </svg>
+</div>
+
+<!-- ================================================================== -->
+<!--  LAYER 2: AUTOMATION HUB                                          -->
+<!-- ================================================================== -->
+<div class="section">
+  <div class="section-header">
+    <div class="bar" style="background:var(--gold)"></div>
+    <h2>Layer 2 &mdash; Automation Hub</h2>
+    <span class="sub">Central orchestration &amp; AI processing</span>
+  </div>
+  <div class="hub-row">
+    <div class="card hub-side" style="text-align:center">
+      <div class="card-icon" style="font-size:22px">&#129302;</div>
+      <div class="card-title" style="justify-content:center;font-size:14px">OpenAI</div>
+      <div class="card-body">AI message classification<br>Smart reply generation<br>Enquiry parsing &amp; extraction</div>
+      <div class="badges" style="justify-content:center"><span class="badge auto">AUTOMATIC</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+      <svg width="80" height="20"><defs><marker id="al" markerWidth="6" markerHeight="5" refX="0" refY="2.5" orient="auto"><path d="M6,0 L0,2.5 L6,5" fill="var(--gold)"/></marker><marker id="ar" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5" fill="var(--gold)"/></marker></defs><line x1="2" y1="10" x2="78" y2="10" stroke="var(--gold)" stroke-width="1.5" marker-start="url(#al)" marker-end="url(#ar)"/></svg>
+      <span style="font-size:7px;color:var(--gray-400)">Parse &amp; classify</span>
+    </div>
+    <div class="hub-center">
+      <div style="font-size:28px;margin-bottom:4px">&#9881;</div>
+      <h3>Make.com</h3>
+      <p>Central Automation Hub</p>
+      <div class="hub-detail">Scenario Orchestration &bull; Webhooks<br>Multi-service Routing &bull; Error Handling</div>
+    </div>
+  </div>
+</div>
+
+<!-- Down arrows from hub to 3 columns -->
+<div style="display:flex;justify-content:center;margin:-10px 0 -6px">
+  <svg width="800" height="50" viewBox="0 0 800 50">
+    <defs>
+      <marker id="as" markerWidth="6" markerHeight="5" refX="3" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5" fill="#162D4E"/></marker>
+      <marker id="ag" markerWidth="6" markerHeight="5" refX="3" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5" fill="#D4922A"/></marker>
+      <marker id="agr" markerWidth="6" markerHeight="5" refX="3" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5" fill="#9CA3AF"/></marker>
+    </defs>
+    <path d="M400,0 Q400,20 180,44" stroke="#162D4E" stroke-width="1.5" fill="none" marker-end="url(#as)"/>
+    <path d="M400,0 Q400,25 400,44" stroke="#9CA3AF" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#agr)"/>
+    <path d="M400,0 Q400,20 620,44" stroke="#D4922A" stroke-width="1.5" fill="none" marker-end="url(#ag)"/>
+    <text x="250" y="22" font-size="7" fill="#162D4E" font-family="Inter" font-weight="600">Create leads</text>
+    <text x="375" y="26" font-size="7" fill="#9CA3AF" font-family="Inter">Check handoff</text>
+    <text x="510" y="22" font-size="7" fill="#D4922A" font-family="Inter" font-weight="600">Trigger workflows</text>
+  </svg>
+</div>
+
+<!-- ================================================================== -->
+<!--  LAYERS 3-5: PHASE 1 | HANDOFF | PHASE 2                         -->
+<!-- ================================================================== -->
+<div class="section">
+  <div class="main-3col">
+
+    <!-- ===== PHASE 1: SALES & CRM ===== -->
+    <div class="col">
+      <div class="section-header" style="margin-bottom:10px">
+        <div class="bar" style="background:var(--steel)"></div>
+        <h2 style="color:var(--steel)">Phase 1 &mdash; Sales &amp; CRM</h2>
+      </div>
+
+      <div class="card bl-steel">
+        <div class="card-title">&#128205; Lead Capture</div>
+        <div class="card-body">Auto-created from all input channels. Fields: name, company, project type, source, value estimate, priority score.</div>
+        <div class="badges"><span class="badge auto">AUTOMATIC</span></div>
+      </div>
+
+      <div class="conn-down"><div class="line"></div></div>
+
+      <div class="card bl-steel">
+        <div class="card-title">&#128200; Lead Pipeline</div>
+        <div class="card-body">5-stage sales pipeline with automatic progression rules &amp; stale-lead alerts</div>
+        <div class="pipeline">
+          <div class="stg">CAPTURE</div>
+          <div class="stg">CLARIFY</div>
+          <div class="stg">PROPOSAL</div>
+          <div class="stg">DECISION</div>
+          <div class="stg">WON</div>
+        </div>
+        <div class="badges"><span class="badge semi">SEMI-AUTO</span></div>
+      </div>
+
+      <div class="conn-down"><div class="line"></div></div>
+
+      <div class="card bl-steel">
+        <div class="card-title">&#128196; Quotation Generator</div>
+        <div class="card-body">LogiKal BOM import &rarr; auto-calculate totals, margins, discounts. PDF generation with branded template. Revision tracking (v1, v2...).</div>
+        <div class="badges">
+          <span class="badge semi">SEMI-AUTO</span>
+          <span class="badge mustadd">LogiKal INTEGRATION</span>
+        </div>
+      </div>
+
+      <div class="conn-down"><div class="line"></div></div>
+
+      <div class="card bl-steel">
+        <div class="card-title">&#9999;&#65039; E-Signature</div>
+        <div class="card-body">DocuSign / Adobe Sign integration. Send for signature, track status, auto-archive signed copies to Google Drive.</div>
+        <div class="badges">
+          <span class="badge auto">AUTOMATIC</span>
+          <span class="badge mustadd">MUST ADD</span>
+        </div>
+      </div>
+
+      <div class="conn-down"><div class="line"></div></div>
+
+      <div class="card bl-steel">
+        <div class="card-title">&#128172; Communications Log</div>
+        <div class="card-body">All WhatsApp, email &amp; phone interactions logged per lead. Timeline view with search &amp; filters.</div>
+        <div class="badges"><span class="badge auto">AUTOMATIC</span></div>
+      </div>
+
+      <div class="flow-label" style="color:var(--steel)">CAPTURE &rarr; PIPELINE &rarr; QUOTE &rarr; SIGN &rarr; HANDOFF &rarr;</div>
+    </div>
+
+    <!-- ===== HANDOFF ZONE (CENTER) ===== -->
+    <div class="col" style="padding-top:36px">
+      <div class="handoff">
+        <h3>Phase 1 &rarr; 2 Checklist</h3>
+        <ul class="checklist">
+          <li><span class="chk">&#10003;</span> Quote Approved</li>
+          <li><span class="chk">&#10003;</span> Contract Signed</li>
+          <li><span class="chk">&#10003;</span> Deposit Received</li>
+          <li><span class="chk">&#10003;</span> Measurements Confirmed</li>
+          <li><span class="chk">&#10003;</span> Google Drive Project Folder Auto-Created</li>
+        </ul>
+        <div style="margin-top:12px;text-align:center"><span class="badge semi">SEMI-AUTO</span></div>
+        <div style="margin-top:10px;text-align:center;font-size:9px;color:var(--gray-500)">All items must be checked before project proceeds to Phase 2</div>
+        <div style="display:flex;justify-content:space-between;margin-top:14px;padding:0 4px">
+          <span style="font-size:9px;font-weight:700;color:var(--steel)">&larr; Phase 1</span>
+          <span style="font-size:9px;font-weight:700;color:var(--gold)">Phase 2 &rarr;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PHASE 2: DELIVERY ===== -->
+    <div class="col">
+      <div class="section-header" style="margin-bottom:10px">
+        <div class="bar" style="background:var(--gold)"></div>
+        <h2 style="color:var(--gold)">Phase 2 &mdash; Delivery</h2>
+      </div>
+
+      <div class="card bl-gold">
+        <div class="sp">
+          <div class="sp-label">2A &mdash; Design &amp; Drawings</div>
+          <div class="sp-items">
+            &#8226; Version control: V1 &rarr; V2 &rarr; FINAL<br>
+            &#8226; Client approval workflow (approve / reject / comment)<br>
+            &#8226; LogiKal BOM export &amp; sync<br>
+            &#8226; Drawing file storage on Google Drive
+          </div>
+        </div>
+        <div class="badges">
+          <span class="badge semi">SEMI-AUTO</span>
+          <span class="badge mustadd">LogiKal SYNC</span>
+        </div>
+      </div>
+
+      <div class="flow-arrow">&#9660;</div>
+
+      <div class="card bl-gold">
+        <div class="sp">
+          <div class="sp-label">2B &mdash; Procurement &amp; Fabrication</div>
+          <div class="sp-items">
+            &#8226; Purchase Order management &amp; tracking<br>
+            &#8226; Supplier alerts: 7 / 3 / 1 day reminders<br>
+            &#8226; Factory scheduling &amp; capacity view<br>
+            &#8226; QA checklist per item batch
+          </div>
+        </div>
+        <div class="badges">
+          <span class="badge semi">SEMI-AUTO</span>
+          <span class="badge auto">ALERTS AUTO</span>
+        </div>
+      </div>
+
+      <div class="flow-arrow">&#9660;</div>
+
+      <div class="card bl-gold">
+        <div class="sp">
+          <div class="sp-label">2C &mdash; Installation &amp; Site</div>
+          <div class="sp-items">
+            &#8226; Issue tickets: ISSUE-[REF]-[SEQ]<br>
+            &#8226; Daily WhatsApp bot progress reports<br>
+            &#8226; Progress tracker with % completion<br>
+            &#8226; Safety checklist per site visit
+          </div>
+        </div>
+        <div class="badges">
+          <span class="badge auto">BOT REPORTS AUTO</span>
+          <span class="badge manual">SITE MANUAL</span>
+        </div>
+      </div>
+
+      <div class="flow-arrow">&#9660;</div>
+
+      <div class="card bl-gold">
+        <div class="sp">
+          <div class="sp-label">2D &mdash; Handover &amp; After-Sales</div>
+          <div class="sp-items">
+            &#8226; Final inspection checklist<br>
+            &#8226; Warranty tracker (start date, expiry, terms)<br>
+            &#8226; Complaints: AS-[REF]-[SEQ]<br>
+            &#8226; Customer satisfaction survey
+          </div>
+        </div>
+        <div class="badges">
+          <span class="badge semi">SEMI-AUTO</span>
+          <span class="badge auto">SURVEY AUTO</span>
+        </div>
+      </div>
+
+      <div class="flow-label" style="color:var(--gold)">FLOW: 2A &rarr; 2B &rarr; 2C &rarr; 2D</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Down arrows to data layer -->
+<div style="display:flex;justify-content:center;margin:-20px 0 -6px">
+  <svg width="800" height="44" viewBox="0 0 800 44">
+    <defs>
+      <marker id="adn" markerWidth="6" markerHeight="5" refX="3" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5" fill="#9CA3AF"/></marker>
+    </defs>
+    <path d="M180,0 Q180,20 270,38" stroke="#162D4E" stroke-width="1.5" fill="none" opacity=".5" marker-end="url(#adn)"/>
+    <path d="M400,0 L400,38" stroke="#9CA3AF" stroke-width="1.5" fill="none" stroke-dasharray="4,3" marker-end="url(#adn)"/>
+    <path d="M620,0 Q620,20 530,38" stroke="#D4922A" stroke-width="1.5" fill="none" opacity=".5" marker-end="url(#adn)"/>
+    <text x="195" y="20" font-size="7" fill="#162D4E" font-family="Inter">Store leads &amp; comms</text>
+    <text x="375" y="20" font-size="7" fill="#9CA3AF" font-family="Inter">All data</text>
+    <text x="545" y="20" font-size="7" fill="#D4922A" font-family="Inter">Delivery data</text>
+  </svg>
+</div>
+
+<!-- ================================================================== -->
+<!--  LAYER 6: DATA & STORAGE                                          -->
+<!-- ================================================================== -->
+<div class="section">
+  <div class="section-header">
+    <div class="bar" style="background:var(--gray-500)"></div>
+    <h2>Layer 6 &mdash; Data &amp; Storage</h2>
+    <span class="sub">Persistent data layer</span>
+  </div>
+  <div class="three-grid">
+    <div class="card bl-gray">
+      <div class="card-icon" style="background:#E0F2FE;color:#0EA5E9">&#128451;</div>
+      <div class="card-title" style="justify-content:center">Supabase Database</div>
+      <div class="card-body">PostgreSQL backend<br><span style="font-size:9px;color:var(--gray-400)">Tables: projects, leads, quotations, drawings, purchase_orders, issues, complaints, users, notifications, audit_log</span></div>
+      <div class="badges" style="justify-content:center"><span class="badge auto">AUTOMATIC</span></div>
+    </div>
+    <div class="card bl-gray">
+      <div class="card-icon" style="background:#FEF9C3;color:#F59E0B">&#128193;</div>
+      <div class="card-title" style="justify-content:center">Google Drive</div>
+      <div class="card-body">Project folders (auto-created)<br><span style="font-size:9px;color:var(--gray-400)">Documents, drawings, contracts, signed PDFs, photos, inspection reports</span></div>
+      <div class="badges" style="justify-content:center"><span class="badge auto">AUTO-CREATE</span></div>
+    </div>
+    <div class="card bl-gray">
+      <div class="card-icon" style="background:#DCFCE7;color:#22C55E">&#128202;</div>
+      <div class="card-title" style="justify-content:center">Google Sheets</div>
+      <div class="card-body">Reports &amp; logs<br><span style="font-size:9px;color:var(--gray-400)">Sales reports, delivery logs, KPI tracking, cost analysis, supplier performance</span></div>
+      <div class="badges" style="justify-content:center"><span class="badge auto">AUTO-SYNC</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Down arrows to output layer -->
+<div style="display:flex;justify-content:center;margin:-20px 0 -6px">
+  <svg width="800" height="40" viewBox="0 0 800 40">
+    <defs><marker id="agg" markerWidth="6" markerHeight="5" refX="3" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5" fill="#22C55E"/></marker></defs>
+    <line x1="270" y1="2" x2="270" y2="34" stroke="#22C55E" stroke-width="1.5" marker-end="url(#agg)"/>
+    <line x1="400" y1="2" x2="400" y2="34" stroke="#22C55E" stroke-width="1.5" marker-end="url(#agg)"/>
+    <line x1="530" y1="2" x2="530" y2="34" stroke="#22C55E" stroke-width="1.5" marker-end="url(#agg)"/>
+    <text x="220" y="20" font-size="7" fill="#22C55E" font-family="Inter">Trigger alerts</text>
+    <text x="360" y="20" font-size="7" fill="#22C55E" font-family="Inter">Attach docs</text>
+    <text x="538" y="20" font-size="7" fill="#22C55E" font-family="Inter">Feed dashboard</text>
+  </svg>
+</div>
+
+<!-- ================================================================== -->
+<!--  LAYER 7: OUTPUT & NOTIFICATIONS                                   -->
+<!-- ================================================================== -->
+<div class="section">
+  <div class="section-header">
+    <div class="bar" style="background:var(--green)"></div>
+    <h2>Layer 7 &mdash; Output &amp; Notifications</h2>
+    <span class="sub">System outputs &amp; user-facing interfaces</span>
+  </div>
+  <div class="three-grid">
+    <div class="card bl-green">
+      <div class="card-icon" style="background:#DCF8C6;color:#25D366">&#128172;</div>
+      <div class="card-title" style="justify-content:center">WhatsApp Notifications</div>
+      <div class="card-body">Alerts, reminders, daily site reports<br><span style="font-size:9px;color:var(--gray-400)">Supplier alerts, approval requests, status updates, daily progress bot</span></div>
+      <div class="badges" style="justify-content:center"><span class="badge auto">AUTOMATIC</span></div>
+    </div>
+    <div class="card bl-green">
+      <div class="card-icon" style="background:#FEE2E2;color:#EA4335">&#9993;</div>
+      <div class="card-title" style="justify-content:center">Email Notifications</div>
+      <div class="card-body">Quotes, approvals, status updates<br><span style="font-size:9px;color:var(--gray-400)">Quotation PDFs, contract links, weekly summaries, warranty reminders</span></div>
+      <div class="badges" style="justify-content:center"><span class="badge auto">AUTOMATIC</span></div>
+    </div>
+    <div class="card bl-green">
+      <div class="card-icon" style="background:rgba(22,45,78,.08);color:var(--steel)">&#128187;</div>
+      <div class="card-title" style="justify-content:center">Web Dashboard</div>
+      <div class="card-body">Full management interface<br><span style="font-size:9px;color:var(--gray-400)">Connects to ALL services &mdash; real-time views, controls, reports &amp; analytics</span></div>
+      <div class="badges" style="justify-content:center"><span class="badge semi">SEMI-AUTO</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Feedback loop arrow -->
+<div style="text-align:center;margin-top:-10px;padding-bottom:20px">
+  <svg width="600" height="46" viewBox="0 0 600 46">
+    <defs><marker id="afb" markerWidth="6" markerHeight="5" refX="3" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5" fill="#9CA3AF"/></marker></defs>
+    <path d="M300,4 Q580,4 580,23 Q580,40 300,40 Q20,40 20,23 Q20,4 300,4" stroke="#9CA3AF" stroke-width="1" fill="none" stroke-dasharray="4,3" opacity=".4"/>
+    <text x="240" y="26" font-size="8" fill="#9CA3AF" font-family="Inter" font-weight="500">Dashboard connects back to Make.com (full feedback loop)</text>
+  </svg>
+</div>
+
+</div><!-- .page -->
+
+<!-- ====== LEGEND ====== -->
+<div class="legend" id="legend">
+  <div class="legend-box hidden" id="legendBox">
+    <h4>Legend <button onclick="document.getElementById('legendBox').classList.add('hidden');document.getElementById('legendBtn').style.display='block'" style="float:right;background:none;border:none;cursor:pointer;font-size:14px;color:var(--gray-400);line-height:1">&times;</button></h4>
+    <div class="legend-grid">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Automatic</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div> Semi-Auto</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Manual</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> Must Add</div>
+      <div class="legend-divider"></div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--steel)"></div> Phase 1 (Sales)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--gold)"></div> Phase 2 (Delivery)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--gray-400)"></div> Data / Storage</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--green)"></div> Output / Notify</div>
+    </div>
+  </div>
+  <button class="legend-toggle" id="legendBtn" onclick="document.getElementById('legendBox').classList.remove('hidden');this.style.display='none'">Show Legend</button>
+</div>
+
+</body>
+</html>
